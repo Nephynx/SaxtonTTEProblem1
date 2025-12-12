@@ -55,22 +55,16 @@ Public Class Form1
     End Sub
 
     Private Sub ButtonUpdate_Click(sender As Object, e As EventArgs) Handles ButtonUpdate.Click
-        If DataGridView1.SelectedRows.Count = 0 Then
-            MessageBox.Show("Select a row to update.")
-        End If
-        Dim row As DataGridViewRow = DataGridView1.SelectedRows(0)
-        Dim Id As Integer = row.Cells("id").Value
-
-        Dim query As String = "UPDATE artifacts_tbl SET artifact_name = @artifact_name, country = @country, year_found = @year_found, condition=@condition WHERE id = @id"
+        Dim query As String = "UPDATE `museum_db`.`artifacts_tbl` SET `artifact_name`=@artifact_name, `country`=@country, `year_found`=@year_found, `condition`=@condition WHERE `id`=@id;"
         Try
             Using conn As New MySqlConnection("server=localhost; userid=root; password=root; database=museum_db;")
                 conn.Open()
                 Using cmd As New MySqlCommand(query, conn)
+                    cmd.Parameters.AddWithValue("@id", CInt(tbHiddenID.Text))
                     cmd.Parameters.AddWithValue("@artifact_name", tbArtifactName.Text)
                     cmd.Parameters.AddWithValue("@country", tbCountry.Text)
                     cmd.Parameters.AddWithValue("@year_found", CInt(tbYearFound.Text))
                     cmd.Parameters.AddWithValue("@condition", cbCondition.Text)
-                    cmd.Parameters.AddWithValue("@id", Id)
                     cmd.ExecuteNonQuery()
                     MessageBox.Show("Record updated successfully!")
                 End Using
